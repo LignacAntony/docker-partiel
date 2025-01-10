@@ -22,8 +22,7 @@ RUN apk add --no-cache \
     php83-mbstring \
     php83-tokenizer \
     bash \
-    curl \
-    composer
+    curl
 
 # Remplacer le lien symbolique existant
 RUN rm -f /usr/bin/php && ln -s /usr/bin/php83 /usr/bin/php
@@ -35,9 +34,8 @@ RUN curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.alpine.sh' 
 # Définition du répertoire de travail
 WORKDIR /app
 
-# Copie des fichiers du projet
-COPY todo-app/. .
-
 EXPOSE 8000
 
-CMD ["tail", "-f", "/dev/null"]
+# Commande pour lancer le serveur Symfony
+CMD ["symfony", "server:start"]
+

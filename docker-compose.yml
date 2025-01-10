@@ -1,0 +1,10 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./todo-app:/app
+    working_dir: /app
+    ports:
+      - "8001:8000"

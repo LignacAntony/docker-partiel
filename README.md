@@ -19,3 +19,9 @@ Pour les images custom, toujours partir d'une base alpine
 
 Fichier texte sur eemi.tech avec URL d'un GitHub qui contient tout le projet
 Mon username GitHub: quentinhermiteau
+
+
+
+CMD IMPORTANTE : 
+docker compose up -d --build
+docker compose exec app symfony serve

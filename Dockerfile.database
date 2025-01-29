@@ -1,0 +1,33 @@
+FROM alpine:latest
+
+# Installer les dépendances nécessaires
+RUN apk upgrade --update && apk add --no-cache \
+    postgresql \
+    postgresql-contrib \
+    su-exec \
+    bash
+
+# Créer les répertoires nécessaires et définir les permissions
+RUN mkdir -p /var/lib/postgresql/data && \
+    mkdir -p /run/postgresql && \
+    chown -R postgres:postgres /var/lib/postgresql/data && \
+    chown -R postgres:postgres /run/postgresql && \
+    chmod 700 /var/lib/postgresql/data && \
+    chmod 777 /run/postgresql
+
+# Initialiser la base de données
+RUN su postgres -c "initdb -D /var/lib/postgresql/data"
+
+# Modifier la configuration pour permettre les connexions
+RUN echo "host all all 0.0.0.0/0 md5" >> /var/lib/postgresql/data/pg_hba.conf && \
+    echo "listen_addresses='*'" >> /var/lib/postgresql/data/postgresql.conf
+
+# Exposer le port PostgreSQL
+EXPOSE 5432
+
+# Copier le script d'initialisation
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+ENTRYPOINT ["docker-entrypoint.sh"]
+CMD ["postgres", "-D", "/var/lib/postgresql/data"]

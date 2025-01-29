@@ -1,0 +1,37 @@
+services:
+  database:
+    build:
+      context: .
+      dockerfile: Dockerfile.database
+    environment:
+      - POSTGRES_DB=tododb
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - PGDATA=/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - symfony_database_network
+      - adminer_postgres_network
+
+  adminer:
+    build:
+      context: .
+      dockerfile: Dockerfile.adminer
+    ports:
+      - "8080:8080"
+    networks:
+      - adminer_postgres_network
+
+volumes:
+  postgres_data:
+
+
+networks:
+  symfony_database_network:
+    name: symfony_database_network
+    driver: bridge
+  adminer_postgres_network:
+    driver: bridge

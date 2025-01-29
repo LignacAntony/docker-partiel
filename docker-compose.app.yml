@@ -1,0 +1,32 @@
+services:
+  composer:
+    build:
+      context: .
+      dockerfile: Dockerfile.composer
+    volumes:
+      - app_source:/app
+
+  symfo:
+    build:
+      context: .
+      dockerfile: Dockerfile.symfo
+    ports:
+      - "8000:8000"
+    volumes:
+      - app_source:/app
+    environment:
+      - APP_ENV=dev
+      - APP_DEBUG=1
+    depends_on:
+      - composer
+    networks:
+      - symfony_database_network
+
+volumes:
+  app_source:
+
+
+networks:
+  symfony_database_network:
+    name: symfony_database_network
+    external: true

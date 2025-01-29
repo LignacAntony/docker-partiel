@@ -1,16 +1,17 @@
 FROM alpine:latest
 
-# Installation des dépendances nécessaires
-RUN apk add --no-cache \
+# Installer PHP et les extensions nécessaires
+RUN apk upgrade --update && apk add --no-cache \
     php83 \
     php83-fpm \
     php83-pdo \
-    php83-pdo_mysql \
+    php83-pdo_pgsql \
     php83-mysqli \
     php83-json \
     php83-openssl \
     php83-curl \
     php83-zlib \
+    php83-iconv \
     php83-xml \
     php83-phar \
     php83-intl \
@@ -24,18 +25,15 @@ RUN apk add --no-cache \
     bash \
     curl
 
-# Remplacer le lien symbolique existant
+# Créer un lien symbolique pour php
 RUN rm -f /usr/bin/php && ln -s /usr/bin/php83 /usr/bin/php
 
-# Installation de Symfony CLI
+# Installer Symfony CLI
 RUN curl -1sLf 'https://dl.cloudsmith.io/public/symfony/stable/setup.alpine.sh' | bash \
     && apk add symfony-cli
 
-# Définition du répertoire de travail
 WORKDIR /app
 
 EXPOSE 8000
 
-# Commande pour lancer le serveur Symfony
-CMD ["symfony", "server:start"]
-
+CMD ["symfony", "server:start", "--no-tls", "--port=8000", "--allow-http", "--allow-all-ip"]
